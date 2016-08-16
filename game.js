@@ -11,6 +11,16 @@ var spaceship_x_velocity = 0.0;
 var spaceship_y_velocity = 0.0;
 var speed = 50;
 var gameObjects = [];
+var is_alive = true;
+
+//Collision between 2 boxes
+function collision(xMin1, xMax1, xMin2, xMax2, yMin1, yMax1, yMin2, yMax2)
+{
+  if (xMin1 < xMax2 && yMin1 < yMax2 && xMin2 < xMax1 && yMin2 < yMax1){
+    return true;
+  }
+  return false;
+}
 
 function location_clicked(min_x,max_x,min_y,max_y){
     if(mouse_x>min_x && mouse_x<max_x && mouse_y>min_y && mouse_y<max_y && (mouse_b & 1 || mouse_b & 2)){
@@ -58,10 +68,14 @@ object.prototype.draw  = function(){
 }
 object.prototype.update = function(){
 	if(this.type==0){
-		if(this.x > spaceship_x)this.x--;
-		if(this.x < spaceship_x)this.x++;
-		if(this.y < spaceship_y)this.y++;
-		if(this.y > spaceship_y)this.y--;
+		if(this.x > spaceship_x)this.x-=0.5;
+		if(this.x < spaceship_x)this.x+=0.5;
+		if(this.y < spaceship_y)this.y+=0.5;
+		if(this.y > spaceship_y)this.y-=0.5;
+		if(collision(this.x,this.x+10,spaceship_x,spaceship_x+30,this.y,this.y+10,spaceship_y,spaceship_y+30)){
+			is_alive=false;
+
+		}
 	
 	
 	}
@@ -76,7 +90,7 @@ function draw()
 
 	draw_sprite(canvas,asteroid_large,0,0);
 	draw_sprite(canvas,asteroid_small,45,0);
-	rotate_sprite(canvas,spaceship,spaceship_x,spaceship_y,angle_allegro);
+	if(is_alive)rotate_sprite(canvas,spaceship,spaceship_x,spaceship_y,angle_allegro);
     
 	for (i = 0; i < gameObjects.length; i++) {
     	gameObjects[i].draw();
@@ -125,8 +139,11 @@ function update()
 
 function setup(){
 
-	var newAsteroid = new object(200,200,0);
-	gameObjects.push(newAsteroid);  
+	for(i=0; i<10; i++){
+		var newAsteroid = new object(100+(Math.random()*1060),100+(Math.random()*820),0);
+		gameObjects.push(newAsteroid);  
+	}
+	
 	background = load_bmp("images/background.png");
 	asteroid_large = load_bmp("images/asteroid_large.png");
 	asteroid_small = load_bmp("images/asteroid_small.png");
