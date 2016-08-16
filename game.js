@@ -55,30 +55,65 @@ function location_right_clicked(min_x,max_x,min_y,max_y){
 	}
 }
 
-var object = function (x,y,type) {
+var object = function (x,y,type,x_velocity,y_velocity) {
 	this.type=type;
 	this.x = x;
 	this.y = y;
+	this.x_velocity=x_velocity;
+	this.y_velocity=y_velocity;
+	
 
 }
+object.prototype.getX = function(){
+	return this.x;
+}
+
+object.prototype.getY = function(){
+	return this.y;
+}
+
+object.prototype.getType = function(){
+	return this.type;
+}
+
+
 object.prototype.draw  = function(){
 	if(this.type==0){
 		draw_sprite(canvas,asteroid_small,this.x,this.y);
 	}
+
+	if(this.type==1){
+		draw_sprite(canvas,asteroid_large,this.x,this.y);
+	}
 }
 object.prototype.update = function(){
+	
+	
+
 	if(this.type==0){
 		if(this.x > spaceship_x)this.x-=0.5;
 		if(this.x < spaceship_x)this.x+=0.5;
 		if(this.y < spaceship_y)this.y+=0.5;
 		if(this.y > spaceship_y)this.y-=0.5;
+
 		if(collision(this.x,this.x+10,spaceship_x,spaceship_x+30,this.y,this.y+10,spaceship_y,spaceship_y+30)){
 			is_alive=false;
 
 		}
-	
-	
 	}
+	if(this.type==1){
+		this.x+=this.x_velocity;
+		this.y+=this.y_velocity;
+
+		if(collision(this.x,this.x+92,spaceship_x,spaceship_x+30,this.y,this.y+90,spaceship_y,spaceship_y+30)){
+			is_alive=false;
+
+		}
+
+		}
+	
+	
+	
 }
 
 function draw()
@@ -103,8 +138,16 @@ function draw()
 
 function update()
 {	
+
 	for (i = 0; i < gameObjects.length; i++) {
     	gameObjects[i].update();
+		
+
+		if(gameObjects[i].getX()>1500 || gameObjects[i].getX()<-500 || gameObjects[i].getY()<-500 || gameObjects[i].getY()>1500 ){
+			gameObjects.splice(i,1);
+			
+
+		}
 	} 
 	 
 	angle=angle+1;
@@ -140,7 +183,20 @@ function update()
 function setup(){
 
 	for(i=0; i<10; i++){
-		var newAsteroid = new object(100+(Math.random()*1060),100+(Math.random()*820),0);
+		var newAsteroid = new object(100+(Math.random()*1060),100+(Math.random()*820),0,0,0);
+		gameObjects.push(newAsteroid);  
+	}
+	for(i=0; i<10; i++){
+		var side = Math.round(Math.random(4)+1);
+		if(side==1)
+			var newAsteroid = new object(100+(Math.random()*1160),0,1,(Math.random()*2)-1,(Math.random()*2)-1);
+		if(side==2)
+			var newAsteroid = new object(100+(Math.random()*1160),920,1,1,(Math.random()*2)-1,(Math.random()*2)-1);
+		if(side==3)
+			var newAsteroid = new object(1160,100+(Math.random()*920),1,1,(Math.random()*2)-1,(Math.random()*2)-1);
+		if(side==4)
+			var newAsteroid = new object(0,100+(Math.random()*920),1,1,(Math.random()*2)-1,(Math.random()*2)-1);
+
 		gameObjects.push(newAsteroid);  
 	}
 	
