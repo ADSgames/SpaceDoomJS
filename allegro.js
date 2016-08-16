@@ -1091,7 +1091,12 @@ function draw_sprite_v_flip(bmp,sprite,x,y)
 
 
 /// Draws a rotated sprite
+
+/// Sos! We want traditional Allegro
 /// Draws a sprite rotating it around its centre point. Opposed to traditional allegro approach, sprite is drawn centered.
+
+
+
 /// @param bmp target bitmap
 /// @param sprite sprite bitmap
 /// @param x,y coordinates of the centre of the image
@@ -1099,8 +1104,8 @@ function draw_sprite_v_flip(bmp,sprite,x,y)
 function rotate_sprite(bmp,sprite,x,y,angle)
 {
 	bmp.context.save();
-	bmp.context.translate(x,y);
-  bmp.context.rotate(RAD(angle));
+	bmp.context.translate(x+sprite.w/2,y+sprite.h/2);
+  bmp.context.rotate(RAD(angle*1.40625));
 	bmp.context.translate(-sprite.w/2,-sprite.h/2);
   bmp.context.drawImage(sprite.canvas,0,0);
   bmp.context.restore();

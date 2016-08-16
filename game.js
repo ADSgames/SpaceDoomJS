@@ -1,4 +1,7 @@
-var coin;
+var background;
+var asteroid_small;
+var spaceship;
+var angle = 0;
 
 function location_clicked(min_x,max_x,min_y,max_y){
     if(mouse_x>min_x && mouse_x<max_x && mouse_y>min_y && mouse_y<max_y && (mouse_b & 1 || mouse_b & 2)){
@@ -22,21 +25,27 @@ function draw()
     
 
 	textout(canvas,font,"Hello",5,35,40,makecol(0,0,0));
-	draw_sprite(canvas,game,0,0);
-	
-	
+	draw_sprite(canvas,background,0,0);
+
+	draw_sprite(canvas,asteroid_large,0,0);
+	draw_sprite(canvas,asteroid_small,45,0);
+	rotate_sprite(canvas,spaceship,0,0,angle);
     
 	
 }
 
 function update()
 {	
+	angle=angle+1;
 	
 
 }
 
 function setup(){
-	game = load_bmp("images/game.png");
+	background = load_bmp("images/background.png");
+	asteroid_large = load_bmp("images/asteroid_large.png");
+	asteroid_small = load_bmp("images/asteroid_small.png");
+	spaceship = load_bmp("images/spaceship.png");
 	
 }
 
