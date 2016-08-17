@@ -1,4 +1,5 @@
 var background;
+var frame;
 var asteroid_small;
 var spaceship;
 var angle = 0;
@@ -12,6 +13,9 @@ var spaceship_y_velocity = 0.0;
 var speed = 50;
 var gameObjects = [];
 var is_alive = true;
+var seconds = 0;
+var minutes = 0; 
+var frames = 0;
 
 //Collision between 2 boxes
 function collision(xMin1, xMax1, xMin2, xMax2, yMin1, yMax1, yMin2, yMax2)
@@ -96,7 +100,7 @@ object.prototype.update = function(){
 		if(this.y < spaceship_y)this.y+=0.5;
 		if(this.y > spaceship_y)this.y-=0.5;
 
-		if(collision(this.x,this.x+10,spaceship_x,spaceship_x+30,this.y,this.y+10,spaceship_y,spaceship_y+30)){
+		if(collision(this.x+5,this.x+40,spaceship_x,spaceship_x+30,this.y+5,this.y+30,spaceship_y,spaceship_y+30)){
 			is_alive=false;
 
 		}
@@ -105,31 +109,49 @@ object.prototype.update = function(){
 		this.x+=this.x_velocity;
 		this.y+=this.y_velocity;
 
-		if(collision(this.x,this.x+92,spaceship_x,spaceship_x+30,this.y,this.y+90,spaceship_y,spaceship_y+30)){
+		if(collision(this.x+10,this.x+82,spaceship_x+10,spaceship_x+30,this.y+10,this.y+90,spaceship_y+10,spaceship_y+30)){
 			is_alive=false;
 
 		}
+	}
+}
+function create_asteroid_type_2(speed){
+	var side = Math.round(Math.random(4)+1);
+	if(side==1)
+		var newAsteroid = new object(100+(Math.random()*1160),0,1,(Math.random()*speed)-1,(Math.random()*speed)-1);
+	if(side==2)
+		var newAsteroid = new object(100+(Math.random()*1160),920,1,1,(Math.random()*speed)-1,(Math.random()*speed)-1);
+	if(side==3)
+		var newAsteroid = new object(1160,100+(Math.random()*920),1,1,(Math.random()*speed)-1,(Math.random()*speed)-1);
+	if(side==4)
+		var newAsteroid = new object(0,100+(Math.random()*920),1,1,(Math.random()*speed)-1,(Math.random()*speed)-1);
 
-		}
-	
-	
-	
+	gameObjects.push(newAsteroid);  
+
 }
 
 function draw()
 {	
     
-    
-	textout(canvas,font,"Hello",5,35,40,makecol(0,0,0));
+	
+   
 	draw_sprite(canvas,background,100,100);
 
-	draw_sprite(canvas,asteroid_large,0,0);
-	draw_sprite(canvas,asteroid_small,45,0);
+	
 	if(is_alive)rotate_sprite(canvas,spaceship,spaceship_x,spaceship_y,angle_allegro);
     
 	for (i = 0; i < gameObjects.length; i++) {
     	gameObjects[i].draw();
 	} 
+
+	draw_sprite(canvas,frame,0,0);
+
+	 if(seconds<10)
+		textout(canvas,font,minutes + ":" + "0" + seconds,5,35,40,makecol(0,0,0));
+	else
+		textout(canvas,font,minutes + ":" + seconds,5,35,40,makecol(0,0,0));
+
+	textout(canvas,font,gameObjects.length,5,65,40,makecol(0,0,0));
 
 	
 }
@@ -138,12 +160,32 @@ function draw()
 
 function update()
 {	
+	frames++;
+	if(frames==60){
+		seconds++;
+		frames=0;	
+	}
+	if(seconds%10==0 && frames==0){
+		if(minutes>0){
+			for(i=0; i<(minutes+1)*5; i++)
+				create_asteroid_type_2(minutes*2);
+			
+		}
+		for(i=0; i<(minutes+1)*3; i++){
+			var newAsteroid = new object(Math.random()*1200,Math.random()*1000,0,0,0);
+			gameObjects.push(newAsteroid);  
+		}
+	}
+	if(seconds==60){
+		seconds=0;
+		minutes++;
+	}
 
 	for (i = 0; i < gameObjects.length; i++) {
     	gameObjects[i].update();
 		
 
-		if(gameObjects[i].getX()>1500 || gameObjects[i].getX()<-500 || gameObjects[i].getY()<-500 || gameObjects[i].getY()>1500 ){
+		if(gameObjects[i].getX()>1300 || gameObjects[i].getX()<-200 || gameObjects[i].getY()<-200 || gameObjects[i].getY()>1300 ){
 			gameObjects.splice(i,1);
 			
 
@@ -180,26 +222,23 @@ function update()
 
 }
 
+
 function setup(){
 
-	for(i=0; i<10; i++){
-		var newAsteroid = new object(100+(Math.random()*1060),100+(Math.random()*820),0,0,0);
-		gameObjects.push(newAsteroid);  
-	}
-	for(i=0; i<10; i++){
-		var side = Math.round(Math.random(4)+1);
-		if(side==1)
-			var newAsteroid = new object(100+(Math.random()*1160),0,1,(Math.random()*2)-1,(Math.random()*2)-1);
-		if(side==2)
-			var newAsteroid = new object(100+(Math.random()*1160),920,1,1,(Math.random()*2)-1,(Math.random()*2)-1);
-		if(side==3)
-			var newAsteroid = new object(1160,100+(Math.random()*920),1,1,(Math.random()*2)-1,(Math.random()*2)-1);
-		if(side==4)
-			var newAsteroid = new object(0,100+(Math.random()*920),1,1,(Math.random()*2)-1,(Math.random()*2)-1);
-
-		gameObjects.push(newAsteroid);  
+	
+	var newAsteroid = new object(300,700,0,0,0);
+	gameObjects.push(newAsteroid);  
+	var newAsteroid = new object(500,900,0,0,0);
+	gameObjects.push(newAsteroid);  
+	var newAsteroid = new object(700,30,0,0,0);
+	gameObjects.push(newAsteroid);  
+	
+	for(i=0; i<3; i++){
+		create_asteroid_type_2();
+		
 	}
 	
+	frame = load_bmp("images/frame.png");
 	background = load_bmp("images/background.png");
 	asteroid_large = load_bmp("images/asteroid_large.png");
 	asteroid_small = load_bmp("images/asteroid_small.png");
