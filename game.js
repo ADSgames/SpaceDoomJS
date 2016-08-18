@@ -115,16 +115,23 @@ object.prototype.update = function(){
 		}
 	}
 }
-function create_asteroid_type_2(speed){
+function create_asteroid(newType,newSpeed){
 	var side = Math.round(Math.random(4)+1);
+	var random_x = 0;
+	var random_y = 0;
+	if(newType==1){
+		random_x=(Math.random()*newSpeed)-1;
+		random_y=(Math.random()*newSpeed)-1;
+	}
+	
 	if(side==1)
-		var newAsteroid = new object(100+(Math.random()*1160),0,1,(Math.random()*speed)-1,(Math.random()*speed)-1);
+		var newAsteroid = new object(100+(Math.random()*1160),0,newType,random_x,random_y);
 	if(side==2)
-		var newAsteroid = new object(100+(Math.random()*1160),920,1,1,(Math.random()*speed)-1,(Math.random()*speed)-1);
+		var newAsteroid = new object(100+(Math.random()*1160),920,newType,random_x,random_y);
 	if(side==3)
-		var newAsteroid = new object(1160,100+(Math.random()*920),1,1,(Math.random()*speed)-1,(Math.random()*speed)-1);
+		var newAsteroid = new object(1160,100+(Math.random()*920),newType,random_x,random_y);
 	if(side==4)
-		var newAsteroid = new object(0,100+(Math.random()*920),1,1,(Math.random()*speed)-1,(Math.random()*speed)-1);
+		var newAsteroid = new object(0,100+(Math.random()*920),newType,random_x,random_y);
 
 	gameObjects.push(newAsteroid);  
 
@@ -167,13 +174,12 @@ function update()
 	}
 	if(seconds%10==0 && frames==0){
 		if(minutes>0){
-			for(i=0; i<(minutes+1)*5; i++)
-				create_asteroid_type_2(minutes*2);
+			for(i=0; i<(minutes+1)*5; i++){}
+				create_asteroid(1,(minutes+1)*2);
 			
 		}
 		for(i=0; i<(minutes+1)*3; i++){
-			var newAsteroid = new object(Math.random()*1200,Math.random()*1000,0,0,0);
-			gameObjects.push(newAsteroid);  
+			create_asteroid(0,0);
 		}
 	}
 	if(seconds==60){
@@ -186,7 +192,7 @@ function update()
 		
 
 		if(gameObjects[i].getX()>1300 || gameObjects[i].getX()<-200 || gameObjects[i].getY()<-200 || gameObjects[i].getY()>1300 ){
-			gameObjects.splice(i,1);
+			//gameObjects.splice(i,1);
 			
 
 		}
@@ -226,15 +232,12 @@ function update()
 function setup(){
 
 	
-	var newAsteroid = new object(300,700,0,0,0);
-	gameObjects.push(newAsteroid);  
-	var newAsteroid = new object(500,900,0,0,0);
-	gameObjects.push(newAsteroid);  
-	var newAsteroid = new object(700,30,0,0,0);
-	gameObjects.push(newAsteroid);  
+	create_asteroid(0,0);
+	create_asteroid(0,0);
+	create_asteroid(0,0);
 	
 	for(i=0; i<3; i++){
-		create_asteroid_type_2();
+		create_asteroid(1,2);
 		
 	}
 	
