@@ -1,6 +1,7 @@
 var background;
 var frame;
 var asteroid_small;
+var vortex;
 var spaceship;
 var angle = 0;
 var spaceship_x = 500.0;
@@ -16,6 +17,9 @@ var is_alive = true;
 var seconds = 0;
 var minutes = 0; 
 var frames = 0;
+var high_minutes = 0;
+var high_seconds = 0;
+var beat_highscore = false;
 
 //Collision between 2 boxes
 function collision(xMin1, xMax1, xMin2, xMax2, yMin1, yMax1, yMin2, yMax2)
@@ -65,6 +69,7 @@ var object = function (x,y,type,x_velocity,y_velocity) {
 	this.y = y;
 	this.x_velocity=x_velocity;
 	this.y_velocity=y_velocity;
+
 	
 
 }
@@ -89,6 +94,11 @@ object.prototype.draw  = function(){
 	if(this.type==1){
 		draw_sprite(canvas,asteroid_large,this.x,this.y);
 	}
+
+	if(this.type==2){
+		rotate_sprite(canvas,vortex,this.x,this.y,angle);
+	}
+
 }
 object.prototype.update = function(){
 	
@@ -114,26 +124,62 @@ object.prototype.update = function(){
 
 		}
 	}
+	
+	if(this.type==2){
+
+
+		if(collision(this.x+20,this.x+30,spaceship_x+10,spaceship_x+30,this.y+20,this.y+30,spaceship_y+10,spaceship_y+30)){
+			is_alive=false;
+
+		}
+	}
 }
+function restart_game(){
+	if(beat_highscore){
+		high_minutes=minutes;
+		high_seconds=seconds;
+		beat_highscore=0;
+ 	}
+	is_alive=true;
+	seconds=0;
+	frames=0;
+	minutes=0;
+	gameObjects.splice(0,gameObjects.length);
+	create_asteroid(0,0);
+	create_asteroid(0,0);
+	create_asteroid(0,0);
+	spaceship_x=500;
+	spaceship_y=400;
+
+}
+
 function create_asteroid(newType,newSpeed){
-	var side = Math.round(Math.random(4)+1);
+
 	var random_x = 0;
 	var random_y = 0;
-	if(newType==1){
-		random_x=(Math.random()*newSpeed)-1;
-		random_y=(Math.random()*newSpeed)-1;
-	}
-	
-	if(side==1)
-		var newAsteroid = new object(100+(Math.random()*1160),0,newType,random_x,random_y);
-	if(side==2)
-		var newAsteroid = new object(100+(Math.random()*1160),920,newType,random_x,random_y);
-	if(side==3)
-		var newAsteroid = new object(1160,100+(Math.random()*920),newType,random_x,random_y);
-	if(side==4)
-		var newAsteroid = new object(0,100+(Math.random()*920),newType,random_x,random_y);
 
-	gameObjects.push(newAsteroid);  
+	if(newType!=2){
+		var side = Math.ceil((Math.random()*4));
+	
+		if(newType==1){
+			random_x=(Math.random()*newSpeed)-1;
+			random_y=(Math.random()*newSpeed)-1;
+		}
+		
+		if(side==1)
+			var newAsteroid = new object(100+(Math.random()*1160),0,newType,random_x,random_y);
+		if(side==2)
+			var newAsteroid = new object(100+(Math.random()*1160),920,newType,random_x,random_y);
+		if(side==3)
+			var newAsteroid = new object(1160,100+(Math.random()*920),newType,random_x,random_y);
+		if(side==4)
+			var newAsteroid = new object(0,100+(Math.random()*920),newType,random_x,random_y);
+
+		gameObjects.push(newAsteroid);  
+	}else{
+		var newAsteroid = new object(100+(Math.random()*1160),100+(Math.random()*920),newType,random_x,random_y);
+		gameObjects.push(newAsteroid);  
+	}
 
 }
 
@@ -153,12 +199,36 @@ function draw()
 
 	draw_sprite(canvas,frame,0,0);
 
-	 if(seconds<10)
-		textout(canvas,font,minutes + ":" + "0" + seconds,5,35,40,makecol(0,0,0));
-	else
-		textout(canvas,font,minutes + ":" + seconds,5,35,40,makecol(0,0,0));
+	if(is_alive){
+		
+		if(high_seconds<10)
+			textout(canvas,font,"Highscore: " + high_minutes + ":" + "0" + high_seconds,100,40,40,makecol(0,0,0));
+		else
+			textout(canvas,font,"Highscore: " + high_minutes + ":" + high_seconds,100,40,40,makecol(0,0,0));
 
-	textout(canvas,font,gameObjects.length,5,65,40,makecol(0,0,0));
+		if(seconds<10)
+			textout(canvas,font,minutes + ":" + "0" + seconds,100,80,40,makecol(0,0,0));
+		else
+			textout(canvas,font,minutes + ":" + seconds,100,80,40,makecol(0,0,0));
+	}
+	if(!is_alive){
+		textout(canvas,font,"You died. Press R to restart",100,40,40,makecol(0,0,0));
+		if(high_minutes<minutes || (high_minutes==minutes && seconds>high_seconds) ){
+			beat_highscore=true;
+			
+			if(seconds<10)
+				textout(canvas,font,"New Highscore!: " + minutes + ":" + "0" + seconds,100,80,40,makecol(0,0,0));
+			else
+				textout(canvas,font,"New Highscore!: " + minutes + ":" + seconds,100,80,40,makecol(0,0,0));
+		}else{
+			if(seconds<10)
+				textout(canvas,font,minutes + ":" + "0" + seconds,100,80,40,makecol(0,0,0));
+			else
+				textout(canvas,font,minutes + ":" + seconds,100,80,40,makecol(0,0,0));
+		}
+	}
+
+	//textout(canvas,font,gameObjects.length,5,65,40,makecol(0,0,0));
 
 	
 }
@@ -166,20 +236,26 @@ function draw()
 
 
 function update()
+
 {	
-	frames++;
+	if(key[KEY_R])
+		restart_game();
+
+	if(is_alive)frames++;
 	if(frames==60){
 		seconds++;
 		frames=0;	
 	}
 	if(seconds%10==0 && frames==0){
 		if(minutes>0){
-			for(i=0; i<(minutes+1)*5; i++){}
+			for(i=0; i<(minutes+1)*5; i++){
 				create_asteroid(1,(minutes+1)*2);
+			}
 			
 		}
 		for(i=0; i<(minutes+1)*3; i++){
 			create_asteroid(0,0);
+			create_asteroid(2,0);
 		}
 	}
 	if(seconds==60){
@@ -192,13 +268,15 @@ function update()
 		
 
 		if(gameObjects[i].getX()>1300 || gameObjects[i].getX()<-200 || gameObjects[i].getY()<-200 || gameObjects[i].getY()>1300 ){
-			//gameObjects.splice(i,1);
+			gameObjects.splice(i,1);
 			
 
 		}
 	} 
 	 
 	angle=angle+1;
+	if(angle==256)
+		angle=0;
 
 	if(spaceship_x>1060-46)
 		spaceship_x=1060-46;
@@ -236,16 +314,12 @@ function setup(){
 	create_asteroid(0,0);
 	create_asteroid(0,0);
 	
-	for(i=0; i<3; i++){
-		create_asteroid(1,2);
-		
-	}
-	
 	frame = load_bmp("images/frame.png");
 	background = load_bmp("images/background.png");
 	asteroid_large = load_bmp("images/asteroid_large.png");
 	asteroid_small = load_bmp("images/asteroid_small.png");
 	spaceship = load_bmp("images/spaceship.png");
+	vortex = load_bmp("images/vortex.png");
 	
 }
 
