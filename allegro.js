@@ -1369,6 +1369,7 @@ function destroy_sample(filename)
 	
 }
 
+/// MAKING THIS ALLEGRO COMPTATIBLE
 /// Plays given sample.
 /// Plays a sample object using given values. Note how pan is left out, as it doesn't seem to have a js counterpart. Freq will probably not work everywhere too!
 /// @param sample sample to be played
@@ -1377,10 +1378,10 @@ function destroy_sample(filename)
 /// @param loop loop or not to loop
 function play_sample(sample,vol,freq,loop)
 {
-	if (vol==null) vol=1.0;
-	if (freq==null) freq=1.0;
+	if (vol==null) vol=255;
+	if (freq==null) freq=1000;
 	if (loop==null) loop=false;
-	adjust_sample(sample,vol,freq,loop)
+	adjust_sample(sample,vol/255,freq/1000,loop)
 	sample.element.currentTime = 0;
 	sample.element.play();
 }

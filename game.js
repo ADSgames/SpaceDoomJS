@@ -20,6 +20,9 @@ var frames = 0;
 var high_minutes = 0;
 var high_seconds = 0;
 var beat_highscore = false;
+var music;
+var vortex_sfx;
+var death_sfx;
 
 //Collision between 2 boxes
 function collision(xMin1, xMax1, xMin2, xMax2, yMin1, yMax1, yMin2, yMax2)
@@ -112,6 +115,7 @@ object.prototype.update = function(){
 
 		if(collision(this.x+5,this.x+40,spaceship_x,spaceship_x+30,this.y+5,this.y+30,spaceship_y,spaceship_y+30)){
 			is_alive=false;
+			play_sample(death_sfx);
 
 		}
 	}
@@ -121,6 +125,7 @@ object.prototype.update = function(){
 
 		if(collision(this.x+10,this.x+82,spaceship_x+10,spaceship_x+30,this.y+10,this.y+90,spaceship_y+10,spaceship_y+30)){
 			is_alive=false;
+			play_sample(death_sfx);
 
 		}
 	}
@@ -130,6 +135,7 @@ object.prototype.update = function(){
 
 		if(collision(this.x+20,this.x+30,spaceship_x+10,spaceship_x+30,this.y+20,this.y+30,spaceship_y+10,spaceship_y+30)){
 			is_alive=false;
+			play_sample(vortex_sfx);
 
 		}
 	}
@@ -275,6 +281,7 @@ function update()
 	} 
 	 
 	angle=angle+1;
+	
 	if(angle==256)
 		angle=0;
 
@@ -290,16 +297,22 @@ function update()
 	if(spaceship_y<100)
 		spaceship_y=100;
 	
-	angle_radians=find_angle(spaceship_x,spaceship_y,mouse_x,mouse_y);
+	if(is_alive){
+		angle_radians=find_angle(spaceship_x,spaceship_y,mouse_x,mouse_y);
 
-	angle_degrees=(angle_radians*57.2957795);
-    angle_allegro=(angle_degrees/1.41176470588);
+		angle_degrees=(angle_radians*57.2957795);
+    	angle_allegro=(angle_degrees/1.41176470588);
 	
-	spaceship_x_velocity = -(spaceship_x - mouse_x)/speed;
-	spaceship_y_velocity = -(spaceship_y - mouse_y)/speed;
+
+		spaceship_x_velocity = -(spaceship_x - mouse_x)/speed;
+		spaceship_y_velocity = -(spaceship_y - mouse_y)/speed;
 	
-	spaceship_x+=spaceship_x_velocity;
-	spaceship_y+=spaceship_y_velocity;
+		spaceship_x+=spaceship_x_velocity;
+		spaceship_y+=spaceship_y_velocity;
+	}else{
+		spaceship_x=10000;
+		spaceship_y=10000;
+	}
 	
 	
 	
@@ -320,6 +333,13 @@ function setup(){
 	asteroid_small = load_bmp("images/asteroid_small.png");
 	spaceship = load_bmp("images/spaceship.png");
 	vortex = load_bmp("images/vortex.png");
+
+	music = load_sample("audio/music.mp3");
+	vortex_sfx = load_sample("audio/vortex_sfx.mp3");
+	death_sfx = load_sample("audio/death_sfx.mp3");
+
+	play_sample(music,255,1000,1);
+	
 	
 }
 
