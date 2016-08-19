@@ -23,6 +23,12 @@ var beat_highscore = false;
 var music;
 var vortex_sfx;
 var death_sfx;
+var main_menu;
+var about;
+var help;
+var tick=0;
+
+var GAME_STATE = 0;
 
 //Collision between 2 boxes
 function collision(xMin1, xMax1, xMin2, xMax2, yMin1, yMax1, yMin2, yMax2)
@@ -106,46 +112,50 @@ object.prototype.draw  = function(){
 object.prototype.update = function(){
 	
 	
+	if(GAME_STATE==1){
+		if(this.type==0){
+			if(this.x > spaceship_x)this.x-=0.5;
+			if(this.x < spaceship_x)this.x+=0.5;
+			if(this.y < spaceship_y)this.y+=0.5;
+			if(this.y > spaceship_y)this.y-=0.5;
 
-	if(this.type==0){
-		if(this.x > spaceship_x)this.x-=0.5;
-		if(this.x < spaceship_x)this.x+=0.5;
-		if(this.y < spaceship_y)this.y+=0.5;
-		if(this.y > spaceship_y)this.y-=0.5;
+			if(collision(this.x+5,this.x+40,spaceship_x,spaceship_x+30,this.y+5,this.y+30,spaceship_y,spaceship_y+30)){
+				is_alive=false;
+				play_sample(death_sfx);
 
-		if(collision(this.x+5,this.x+40,spaceship_x,spaceship_x+30,this.y+5,this.y+30,spaceship_y,spaceship_y+30)){
-			is_alive=false;
-			play_sample(death_sfx);
+			}
+		}
+		if(this.type==1){
+			this.x+=this.x_velocity;
+			this.y+=this.y_velocity;
 
+			if(collision(this.x+10,this.x+82,spaceship_x+10,spaceship_x+30,this.y+10,this.y+90,spaceship_y+10,spaceship_y+30)){
+				is_alive=false;
+				play_sample(death_sfx);
+
+			}
+		}
+		
+		if(this.type==2){
+
+
+			if(collision(this.x+10,this.x+30,spaceship_x+10,spaceship_x+30,this.y+10,this.y+30,spaceship_y+10,spaceship_y+30)){
+				is_alive=false;
+				play_sample(vortex_sfx);
+
+			}
 		}
 	}
-	if(this.type==1){
-		this.x+=this.x_velocity;
-		this.y+=this.y_velocity;
 
-		if(collision(this.x+10,this.x+82,spaceship_x+10,spaceship_x+30,this.y+10,this.y+90,spaceship_y+10,spaceship_y+30)){
-			is_alive=false;
-			play_sample(death_sfx);
-
-		}
-	}
-	
-	if(this.type==2){
-
-
-		if(collision(this.x+20,this.x+30,spaceship_x+10,spaceship_x+30,this.y+20,this.y+30,spaceship_y+10,spaceship_y+30)){
-			is_alive=false;
-			play_sample(vortex_sfx);
-
-		}
-	}
 }
 function restart_game(){
+	
 	if(beat_highscore){
 		high_minutes=minutes;
 		high_seconds=seconds;
 		beat_highscore=0;
  	}
+
 	is_alive=true;
 	seconds=0;
 	frames=0;
@@ -193,45 +203,64 @@ function draw()
 {	
     
 	
-   
-	draw_sprite(canvas,background,100,100);
+   if(GAME_STATE==1){
+		draw_sprite(canvas,background,100,100);
 
-	
-	if(is_alive)rotate_sprite(canvas,spaceship,spaceship_x,spaceship_y,angle_allegro);
-    
-	for (i = 0; i < gameObjects.length; i++) {
-    	gameObjects[i].draw();
-	} 
-
-	draw_sprite(canvas,frame,0,0);
-
-	if(is_alive){
 		
-		if(high_seconds<10)
-			textout(canvas,font,"Highscore: " + high_minutes + ":" + "0" + high_seconds,100,40,40,makecol(0,0,0));
-		else
-			textout(canvas,font,"Highscore: " + high_minutes + ":" + high_seconds,100,40,40,makecol(0,0,0));
+		if(is_alive)rotate_sprite(canvas,spaceship,spaceship_x,spaceship_y,angle_allegro);
+		
+		for (i = 0; i < gameObjects.length; i++) {
+			gameObjects[i].draw();
+		} 
 
-		if(seconds<10)
-			textout(canvas,font,minutes + ":" + "0" + seconds,100,80,40,makecol(0,0,0));
-		else
-			textout(canvas,font,minutes + ":" + seconds,100,80,40,makecol(0,0,0));
-	}
-	if(!is_alive){
-		textout(canvas,font,"You died. Press R to restart",100,40,40,makecol(0,0,0));
-		if(high_minutes<minutes || (high_minutes==minutes && seconds>high_seconds) ){
-			beat_highscore=true;
+		draw_sprite(canvas,frame,0,0);
+
+		if(is_alive){
 			
-			if(seconds<10)
-				textout(canvas,font,"New Highscore!: " + minutes + ":" + "0" + seconds,100,80,40,makecol(0,0,0));
+			if(high_seconds<10)
+				textout(canvas,font,"Highscore: " + high_minutes + ":" + "0" + high_seconds,100,40,40,makecol(0,0,0));
 			else
-				textout(canvas,font,"New Highscore!: " + minutes + ":" + seconds,100,80,40,makecol(0,0,0));
-		}else{
+				textout(canvas,font,"Highscore: " + high_minutes + ":" + high_seconds,100,40,40,makecol(0,0,0));
+
 			if(seconds<10)
 				textout(canvas,font,minutes + ":" + "0" + seconds,100,80,40,makecol(0,0,0));
 			else
 				textout(canvas,font,minutes + ":" + seconds,100,80,40,makecol(0,0,0));
 		}
+		if(!is_alive){
+			textout(canvas,font,"You died. Press R to restart",100,40,40,makecol(0,0,0));
+			if(high_minutes<minutes || (high_minutes==minutes && seconds>high_seconds) ){
+				beat_highscore=true;
+				
+				if(seconds<10)
+					textout(canvas,font,"New Highscore!: " + minutes + ":" + "0" + seconds,100,80,40,makecol(0,0,0));
+				else
+					textout(canvas,font,"New Highscore!: " + minutes + ":" + seconds,100,80,40,makecol(0,0,0));
+			}else{
+				if(seconds<10)
+					textout(canvas,font,minutes + ":" + "0" + seconds,100,80,40,makecol(0,0,0));
+				else
+					textout(canvas,font,minutes + ":" + seconds,100,80,40,makecol(0,0,0));
+			}
+		}
+    }
+	if(GAME_STATE==0){
+		draw_sprite(canvas,frame,0,0);
+		draw_sprite(canvas,background,100,100);
+		draw_sprite(canvas,main_menu,100,100);
+
+	}
+	if(GAME_STATE==2){
+		draw_sprite(canvas,frame,0,0);
+		draw_sprite(canvas,background,100,100);
+		draw_sprite(canvas,help,100,100);
+
+	}
+	if(GAME_STATE==3){
+		draw_sprite(canvas,frame,0,0);
+		draw_sprite(canvas,background,100,100);
+		draw_sprite(canvas,about,100,100);
+
 	}
 
 	//textout(canvas,font,gameObjects.length,5,65,40,makecol(0,0,0));
@@ -244,77 +273,108 @@ function draw()
 function update()
 
 {	
-	if(key[KEY_R])
-		restart_game();
+	tick+=1;
 
-	if(is_alive)frames++;
-	if(frames==60){
-		seconds++;
-		frames=0;	
-	}
-	if(seconds%10==0 && frames==0){
-		if(minutes>0){
-			for(i=0; i<(minutes+1)*5; i++){
-				create_asteroid(1,(minutes+1)*2);
+	if(GAME_STATE==1){
+
+		if(key[KEY_ESC]){
+			GAME_STATE=0;
+			restart_game();
+		}
+		if(key[KEY_R])
+			restart_game();
+
+		if(is_alive)frames++;
+		if(frames==60){
+			seconds++;
+			frames=0;	
+		}
+		if(seconds%10==0 && frames==0){
+			if(minutes>0){
+				for(i=0; i<(minutes+1)*5; i++){
+					create_asteroid(1,(minutes+1)*2);
+				}
+				
 			}
-			
+			for(i=0; i<(minutes+1)*3; i++){
+				create_asteroid(0,0);
+				create_asteroid(2,0);
+			}
 		}
-		for(i=0; i<(minutes+1)*3; i++){
-			create_asteroid(0,0);
-			create_asteroid(2,0);
+		if(seconds==60){
+			seconds=0;
+			minutes++;
 		}
-	}
-	if(seconds==60){
-		seconds=0;
-		minutes++;
-	}
 
-	for (i = 0; i < gameObjects.length; i++) {
-    	gameObjects[i].update();
+		for (i = 0; i < gameObjects.length; i++) {
+			gameObjects[i].update();
+			
+
+			if(gameObjects[i].getX()>1300 || gameObjects[i].getX()<-200 || gameObjects[i].getY()<-200 || gameObjects[i].getY()>1300 ){
+				gameObjects.splice(i,1);
+				
+
+			}
+		} 
+		
+		angle=angle+1;
+		
+		if(angle==256)
+			angle=0;
+
+		if(spaceship_x>1060-46)
+			spaceship_x=1060-46;
+
+		if(spaceship_x<100)
+			spaceship_x=100;
+
+		if(spaceship_y>820-46)
+			spaceship_y=820-46;
+
+		if(spaceship_y<100)
+			spaceship_y=100;
+		
+		if(is_alive){
+			angle_radians=find_angle(spaceship_x,spaceship_y,mouse_x,mouse_y);
+
+			angle_degrees=(angle_radians*57.2957795);
+			angle_allegro=(angle_degrees/1.41176470588);
 		
 
-		if(gameObjects[i].getX()>1300 || gameObjects[i].getX()<-200 || gameObjects[i].getY()<-200 || gameObjects[i].getY()>1300 ){
-			gameObjects.splice(i,1);
-			
-
+			spaceship_x_velocity = -(spaceship_x - mouse_x)/speed;
+			spaceship_y_velocity = -(spaceship_y - mouse_y)/speed;
+		
+			spaceship_x+=spaceship_x_velocity;
+			spaceship_y+=spaceship_y_velocity;
+		}else{
+			spaceship_x=10000;
+			spaceship_y=10000;
 		}
-	} 
-	 
-	angle=angle+1;
-	
-	if(angle==256)
-		angle=0;
-
-	if(spaceship_x>1060-46)
-		spaceship_x=1060-46;
-
-	if(spaceship_x<100)
-		spaceship_x=100;
-
-	if(spaceship_y>820-46)
-		spaceship_y=820-46;
-
-	if(spaceship_y<100)
-		spaceship_y=100;
-	
-	if(is_alive){
-		angle_radians=find_angle(spaceship_x,spaceship_y,mouse_x,mouse_y);
-
-		angle_degrees=(angle_radians*57.2957795);
-    	angle_allegro=(angle_degrees/1.41176470588);
-	
-
-		spaceship_x_velocity = -(spaceship_x - mouse_x)/speed;
-		spaceship_y_velocity = -(spaceship_y - mouse_y)/speed;
-	
-		spaceship_x+=spaceship_x_velocity;
-		spaceship_y+=spaceship_y_velocity;
-	}else{
-		spaceship_x=10000;
-		spaceship_y=10000;
 	}
-	
-	
+	if(GAME_STATE==0 && tick>10){
+		if(location_clicked(390,800,460,560)){
+			tick=0;
+			restart_game();
+			create_asteroid(0,0);
+			create_asteroid(0,0);
+			create_asteroid(0,0);
+			GAME_STATE=1;
+		}
+		if(location_clicked(390,800,560,660)){
+			tick=0;
+			GAME_STATE=2;
+		}
+		if(location_clicked(390,800,660,760)){
+			tick=0;
+			
+			GAME_STATE=3;
+		}
+	}
+	if((GAME_STATE==2 || GAME_STATE==3) && mouse_b & 1 && tick>10){
+		GAME_STATE=0;
+		tick=0;
+	}
+		
 	
 
 }
@@ -323,16 +383,16 @@ function update()
 function setup(){
 
 	
-	create_asteroid(0,0);
-	create_asteroid(0,0);
-	create_asteroid(0,0);
 	
 	frame = load_bmp("images/frame.png");
 	background = load_bmp("images/background.png");
+	main_menu = load_bmp("images/main_menu.png");
 	asteroid_large = load_bmp("images/asteroid_large.png");
 	asteroid_small = load_bmp("images/asteroid_small.png");
 	spaceship = load_bmp("images/spaceship.png");
 	vortex = load_bmp("images/vortex.png");
+	help = load_bmp("images/help.png");
+	about = load_bmp("images/about.png");
 
 	music = load_sample("audio/music.mp3");
 	vortex_sfx = load_sample("audio/vortex_sfx.mp3");
