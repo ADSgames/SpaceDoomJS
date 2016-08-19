@@ -370,9 +370,14 @@ function update()
 			GAME_STATE=3;
 		}
 	}
-	if((GAME_STATE==2 || GAME_STATE==3) && mouse_b & 1 && tick>10){
-		GAME_STATE=0;
-		tick=0;
+	if((GAME_STATE==2 || GAME_STATE==3)){
+		if(mouse_b & 1 && tick>10){
+			GAME_STATE=0;
+			tick=0;
+		}
+		if(key[KEY_ESC]){
+			GAME_STATE=0;
+		}
 	}
 		
 	
