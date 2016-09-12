@@ -27,6 +27,8 @@ var main_menu;
 var about;
 var help;
 var tick=0;
+var gas;
+var spaceship_speed=0.5;
 
 var GAME_STATE = 0;
 
@@ -108,6 +110,11 @@ object.prototype.draw  = function(){
 		rotate_sprite(canvas,vortex,this.x,this.y,angle);
 	}
 
+	if(this.type==3){
+		rotate_sprite(canvas,gas,this.x,this.y,angle);
+	}
+
+
 }
 object.prototype.update = function(){
 	
@@ -145,6 +152,17 @@ object.prototype.update = function(){
 
 			}
 		}
+
+		if(this.type==3){
+
+
+			if(collision(this.x+10,this.x+30,spaceship_x+10,spaceship_x+30,this.y+10,this.y+30,spaceship_y+10,spaceship_y+30)){
+				spaceship_speed+=5;
+				//play_sample(vortex_sfx);
+
+			}
+		}
+	
 	}
 
 }
@@ -277,6 +295,8 @@ function update()
 
 	if(GAME_STATE==1){
 
+		create_asteroid(3,0);
+
 		if(key[KEY_ESC]){
 			GAME_STATE=0;
 			restart_game();
@@ -287,7 +307,11 @@ function update()
 		if(is_alive)frames++;
 		if(frames==60){
 			seconds++;
-			frames=0;	
+			frames=0;
+
+			if(1==1){
+				create_asteroid(3,0);
+			}	
 		}
 		if(seconds%10==0 && frames==0){
 			if(minutes>0){
@@ -341,8 +365,8 @@ function update()
 			angle_allegro=(angle_degrees/1.41176470588);
 		
 
-			spaceship_x_velocity = -(spaceship_x - mouse_x)/speed;
-			spaceship_y_velocity = -(spaceship_y - mouse_y)/speed;
+			spaceship_x_velocity = -(spaceship_x - mouse_x)/spaceship_speed;
+			spaceship_y_velocity = -(spaceship_y - mouse_y)/spaceship_speed;
 		
 			spaceship_x+=spaceship_x_velocity;
 			spaceship_y+=spaceship_y_velocity;
@@ -398,6 +422,9 @@ function setup(){
 	vortex = load_bmp("images/vortex.png");
 	help = load_bmp("images/help.png");
 	about = load_bmp("images/about.png");
+
+	gas = load_bmp("images/gas.png");
+
 
 	music = load_sample("audio/music.mp3");
 	vortex_sfx = load_sample("audio/vortex_sfx.mp3");
