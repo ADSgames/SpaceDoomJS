@@ -140,7 +140,7 @@ object.prototype.update = function(){
 			if(collision(this.x+10,this.x+82,spaceship_x+10,spaceship_x+30,this.y+10,this.y+90,spaceship_y+10,spaceship_y+30)){
 				is_alive=false;
 				play_sample(death_sfx);
-show_mouse();
+
 			}
 		}
 		
@@ -203,23 +203,23 @@ function create_asteroid(newType,newSpeed){
 		}
 		
 		if(side==1)
-			var newAsteroid = new object(100+(Math.random()*1160),0,newType,random_x,random_y);
+			var newAsteroid = new object((Math.random()*960),0,newType,random_x,random_y);
 		if(side==2)
-			var newAsteroid = new object(100+(Math.random()*1160),920,newType,random_x,random_y);
+			var newAsteroid = new object((Math.random()*960),820,newType,random_x,random_y);
 		if(side==3)
-			var newAsteroid = new object(1160,100+(Math.random()*920),newType,random_x,random_y);
+			var newAsteroid = new object(960,100+(Math.random()*720),newType,random_x,random_y);
 		if(side==4)
-			var newAsteroid = new object(0,100+(Math.random()*920),newType,random_x,random_y);
+			var newAsteroid = new object(-50,100+(Math.random()*720),newType,random_x,random_y);
 
 		gameObjects.push(newAsteroid); 
 		
 
 	}else if(newType==2){
-		var newAsteroid = new object(100+(Math.random()*1160),100+(Math.random()*920),newType,random_x,random_y);
+		var newAsteroid = new object((Math.random()*960),100+(Math.random()*720),newType,random_x,random_y);
 		gameObjects.push(newAsteroid);  
 	
 	}else if(newType==3){
-		var newAsteroid = new object(300+(Math.random()*960),300+(Math.random()*720),newType,random_x,random_y);
+		var newAsteroid = new object(100+(Math.random()*760),100+(Math.random()*520),newType,random_x,random_y);
 		gameObjects.push(newAsteroid);  
 	}
 
@@ -230,7 +230,7 @@ function draw()
     
 	
    if(GAME_STATE==1){
-		draw_sprite(canvas,background,100,100);
+		draw_sprite(canvas,background,0,100);
 
 		
 		if(is_alive)rotate_sprite(canvas,spaceship,spaceship_x,spaceship_y,angle_allegro);
@@ -244,50 +244,51 @@ function draw()
 		if(is_alive){
 			
 			if(high_seconds<10)
-				textout(canvas,font,"Highscore: " + high_minutes + ":" + "0" + high_seconds,100,40,40,makecol(0,0,0));
+				textout(canvas,font,"Highscore: " + high_minutes + ":" + "0" + high_seconds,0,40,40,makecol(0,0,0));
 			else
-				textout(canvas,font,"Highscore: " + high_minutes + ":" + high_seconds,100,40,40,makecol(0,0,0));
+				textout(canvas,font,"Highscore: " + high_minutes + ":" + high_seconds,0,40,40,makecol(0,0,0));
 
 			if(seconds<10)
-				textout(canvas,font,minutes + ":" + "0" + seconds,100,80,40,makecol(0,0,0));
+				textout(canvas,font,minutes + ":" + "0" + seconds,0,80,40,makecol(0,0,0));
 			else
-				textout(canvas,font,minutes + ":" + seconds,100,80,40,makecol(0,0,0));
+				textout(canvas,font,minutes + ":" + seconds,0,80,40,makecol(0,0,0));
 		}
 		if(!is_alive){
-			textout(canvas,font,"You died. Press R to restart",100,40,40,makecol(0,0,0));
+			textout(canvas,font,"You died. Press R to restart",0,40,40,makecol(0,0,0));
 			if(high_minutes<minutes || (high_minutes==minutes && seconds>high_seconds) ){
 				beat_highscore=true;
 				
 				if(seconds<10)
-					textout(canvas,font,"New Highscore!: " + minutes + ":" + "0" + seconds,100,80,40,makecol(0,0,0));
+					textout(canvas,font,"New Highscore!: " + minutes + ":" + "0" + seconds,0,80,40,makecol(0,0,0));
 				else
-					textout(canvas,font,"New Highscore!: " + minutes + ":" + seconds,100,80,40,makecol(0,0,0));
+					textout(canvas,font,"New Highscore!: " + minutes + ":" + seconds,0,80,40,makecol(0,0,0));
 			}else{
 				if(seconds<10)
-					textout(canvas,font,minutes + ":" + "0" + seconds,100,80,40,makecol(0,0,0));
+					textout(canvas,font,minutes + ":" + "0" + seconds,0,80,40,makecol(0,0,0));
 				else
-					textout(canvas,font,minutes + ":" + seconds,100,80,40,makecol(0,0,0));
+					textout(canvas,font,minutes + ":" + seconds,0,80,40,makecol(0,0,0));
 			}
 		}
     }
 	if(GAME_STATE==0){
 		draw_sprite(canvas,frame,0,0);
-		draw_sprite(canvas,background,100,100);
-		draw_sprite(canvas,main_menu,100,100);
+		draw_sprite(canvas,background,0,100);
+		draw_sprite(canvas,main_menu,0,100);
 
 	}
 	if(GAME_STATE==2){
 		draw_sprite(canvas,frame,0,0);
-		draw_sprite(canvas,background,100,100);
-		draw_sprite(canvas,help,100,100);
+		draw_sprite(canvas,background,0,100);
+		draw_sprite(canvas,help,0,100);
 
 	}
 	if(GAME_STATE==3){
 		draw_sprite(canvas,frame,0,0);
-		draw_sprite(canvas,background,100,100);
-		draw_sprite(canvas,about,100,100);
+		draw_sprite(canvas,background,0,100);
+		draw_sprite(canvas,about,0,100);
 
 	}
+
 	draw_sprite(canvas,cursor,mouse_x,mouse_y);
 	//textout(canvas,font,gameObjects.length,5,65,40,makecol(0,0,0));
 
@@ -357,11 +358,11 @@ function update()
 		if(angle==256)
 			angle=0;
 
-		if(spaceship_x>1060-46)
-			spaceship_x=1060-46;
+		if(spaceship_x>960-46)
+			spaceship_x=960-46;
 
-		if(spaceship_x<100)
-			spaceship_x=100;
+		if(spaceship_x<0)
+			spaceship_x=0;
 
 		if(spaceship_y>820-46)
 			spaceship_y=820-46;
@@ -387,7 +388,7 @@ function update()
 		}
 	}
 	if(GAME_STATE==0 && tick>10){
-		if(location_clicked(390,800,460,560)){
+	if(location_clicked(290,700,460,560)){
 			tick=0;
 			restart_game();
 			create_asteroid(0,0);
@@ -395,11 +396,11 @@ function update()
 			create_asteroid(0,0);
 			GAME_STATE=1;
 		}
-		if(location_clicked(390,800,560,660)){
+		if(location_clicked(290,700,560,660)){
 			tick=0;
 			GAME_STATE=2;
 		}
-		if(location_clicked(390,800,660,760)){
+		if(location_clicked(290,700,660,760)){
 			tick=0;
 			
 			GAME_STATE=3;
@@ -422,7 +423,6 @@ function update()
 
 function setup(){
 
-	
 	
 	frame = load_bmp("images/frame.png");
 	background = load_bmp("images/background.png");
@@ -450,7 +450,7 @@ function setup(){
 function main()
 {
 	enable_debug('debug');
-	allegro_init_all("game_canvas", 1160,920);
+	allegro_init_all("game_canvas", 960,820);
 	
 	setup();
 	ready(function(){
