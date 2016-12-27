@@ -103,7 +103,7 @@ var _last_mouse_z = -1;
 /// is context menu enabled?
 var _menu = false;
 
-
+var is_pointer_locked=false;
 
 
 
@@ -114,16 +114,15 @@ function install_mouse(menu)
 {	
 	canvas.canvas.onclick = function() {
  		canvas.canvas.requestPointerLock();
-		document.addEventListener("mousemove", updatePosition, false);
+		//document.addEventListener("mousemove", updatePosition, false);
+		is_pointer_locked=true;
+
 
 	}
 
 	canvas.canvas.requestPointerLock = canvas.canvas.requestPointerLock ||
-                            canvas.canvas.mozRequestPointerLock;
+             canvas.canvas.mozRequestPointerLock;
 
-	canvas.canvas.requestPointerLock()
-
-	
 	if (!canvas)
 	{
 		_error("You must call set_gfx_mode before install_mouse");
@@ -140,6 +139,7 @@ function install_mouse(menu)
 	canvas.canvas.addEventListener('mousedown',_mousedown);
 	canvas.canvas.addEventListener('mousemove',_mousemove);
 	canvas.canvas.addEventListener('wheel',_mousewheel);
+
 	if (menu) 
 	{
 		_menu_supress=true;
@@ -218,12 +218,25 @@ function _mousedown(e)
 }
 
 /// mouse move event handler
-function _mousemove(e)
+function _mousemove_legacy(e)
 {
 	mouse_x = e.offsetX;
 	mouse_y = e.offsetY;
 	e.preventDefault();
 }
+
+function _mousemove(e) {
+  if(!is_pointer_locked){
+	mouse_x = e.offsetX;
+	mouse_y = e.offsetY;
+	e.preventDefault();
+  }
+  if(is_pointer_locked){
+  	mouse_x += e.movementX;
+  	mouse_y += e.movementY;
+  }
+}
+
 
 /// mouse wheel event handler
 function _mousewheel(e)

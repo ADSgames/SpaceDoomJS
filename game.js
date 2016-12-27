@@ -29,8 +29,6 @@ var help;
 var tick=0;
 var gas;
 var spaceship_speed=100;
-var game_mouse_x=200;
-var game_mouse_y=200;
 var cursor;
 
 var GAME_STATE = 0;
@@ -45,7 +43,7 @@ function collision(xMin1, xMax1, xMin2, xMax2, yMin1, yMax1, yMin2, yMax2)
 }
 
 function location_clicked(min_x,max_x,min_y,max_y){
-    if(game_mouse_x>min_x && game_mouse_x<max_x && game_mouse_y>min_y && game_mouse_y<max_y && (mouse_b & 1 || mouse_b & 2)){
+    if(mouse_x>min_x && mouse_x<max_x && mouse_y>min_y && mouse_y<max_y && (mouse_b & 1 || mouse_b & 2)){
         return true;
 	}else{
 		return false;
@@ -70,7 +68,7 @@ function find_angle(x_1,  y_1, x_2, y_2){
 }
 
 function location_right_clicked(min_x,max_x,min_y,max_y){
-    if(game_mouse_x>min_x && game_mouse_x<max_x && game_mouse_y>min_y && game_mouse_y<max_y && mouse_b & 4){
+    if(mouse_x>min_x && mouse_x<max_x && mouse_y>min_y && mouse_y<max_y && mouse_b & 4){
         return true;
 	}else{
 		return false;
@@ -290,23 +288,17 @@ function draw()
 		draw_sprite(canvas,about,100,100);
 
 	}
-	draw_sprite(canvas,cursor,game_mouse_x,game_mouse_y);
+	draw_sprite(canvas,cursor,mouse_x,mouse_y);
 	//textout(canvas,font,gameObjects.length,5,65,40,makecol(0,0,0));
 
 	
-}
-
-
-function updatePosition(e) {
-  game_mouse_x += e.movementX;
-  game_mouse_y += e.movementY;
 }
 
 function update()
 
 {	
 
-	console.log(game_mouse_x + ":" + game_mouse_y);
+	console.log(mouse_x + ":" + mouse_y);
 
 	tick+=1;
 
@@ -314,7 +306,7 @@ function update()
 
 		
 
-		if(key[KEY_ESC]){
+		if(key[KEY_B]){
 			GAME_STATE=0;
 			restart_game();
 		}
@@ -378,14 +370,14 @@ function update()
 			spaceship_y=100;
 		
 		if(is_alive){
-			angle_radians=find_angle(spaceship_x,spaceship_y,game_mouse_x,game_mouse_y);
+			angle_radians=find_angle(spaceship_x,spaceship_y,mouse_x,mouse_y);
 
 			angle_degrees=(angle_radians*57.2957795);
 			angle_allegro=(angle_degrees/1.41176470588);
 		
 
-			spaceship_x_velocity = -(spaceship_x - game_mouse_x)/spaceship_speed;
-			spaceship_y_velocity = -(spaceship_y - game_mouse_y)/spaceship_speed;
+			spaceship_x_velocity = -(spaceship_x - mouse_x)/spaceship_speed;
+			spaceship_y_velocity = -(spaceship_y - mouse_y)/spaceship_speed;
 		
 			spaceship_x+=spaceship_x_velocity;
 			spaceship_y+=spaceship_y_velocity;
@@ -418,7 +410,7 @@ function update()
 			GAME_STATE=0;
 			tick=0;
 		}
-		if(key[KEY_ESC]){
+		if(key[KEY_B]){
 			GAME_STATE=0;
 		}
 	}
