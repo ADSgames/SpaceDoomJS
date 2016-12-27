@@ -28,7 +28,10 @@ var about;
 var help;
 var tick=0;
 var gas;
-var spaceship_speed=0.5;
+var spaceship_speed=100;
+var game_mouse_x=200;
+var game_mouse_y=200;
+var cursor;
 
 var GAME_STATE = 0;
 
@@ -42,7 +45,7 @@ function collision(xMin1, xMax1, xMin2, xMax2, yMin1, yMax1, yMin2, yMax2)
 }
 
 function location_clicked(min_x,max_x,min_y,max_y){
-    if(mouse_x>min_x && mouse_x<max_x && mouse_y>min_y && mouse_y<max_y && (mouse_b & 1 || mouse_b & 2)){
+    if(game_mouse_x>min_x && game_mouse_x<max_x && game_mouse_y>min_y && game_mouse_y<max_y && (mouse_b & 1 || mouse_b & 2)){
         return true;
 	}else{
 		return false;
@@ -67,7 +70,7 @@ function find_angle(x_1,  y_1, x_2, y_2){
 }
 
 function location_right_clicked(min_x,max_x,min_y,max_y){
-    if(mouse_x>min_x && mouse_x<max_x && mouse_y>min_y && mouse_y<max_y && mouse_b & 4){
+    if(game_mouse_x>min_x && game_mouse_x<max_x && game_mouse_y>min_y && game_mouse_y<max_y && mouse_b & 4){
         return true;
 	}else{
 		return false;
@@ -111,7 +114,7 @@ object.prototype.draw  = function(){
 	}
 
 	if(this.type==3){
-		rotate_sprite(canvas,gas,this.x,this.y,angle);
+		rotate_sprite(canvas,gas,this.x,this.y);
 	}
 
 
@@ -139,7 +142,7 @@ object.prototype.update = function(){
 			if(collision(this.x+10,this.x+82,spaceship_x+10,spaceship_x+30,this.y+10,this.y+90,spaceship_y+10,spaceship_y+30)){
 				is_alive=false;
 				play_sample(death_sfx);
-
+show_mouse();
 			}
 		}
 		
@@ -154,10 +157,11 @@ object.prototype.update = function(){
 		}
 
 		if(this.type==3){
-
-
+		
 			if(collision(this.x+10,this.x+30,spaceship_x+10,spaceship_x+30,this.y+10,this.y+30,spaceship_y+10,spaceship_y+30)){
-				spaceship_speed+=5;
+				if(spaceship_speed>10)
+					spaceship_speed-=10;
+				gameObjects.splice(gameObjects.indexOf(this),1);
 				//play_sample(vortex_sfx);
 
 			}
@@ -173,7 +177,7 @@ function restart_game(){
 		high_seconds=seconds;
 		beat_highscore=0;
  	}
-
+	spaceship_speed=100;
 	is_alive=true;
 	seconds=0;
 	frames=0;
@@ -192,7 +196,7 @@ function create_asteroid(newType,newSpeed){
 	var random_x = 0;
 	var random_y = 0;
 
-	if(newType!=2){
+	if(newType==1 || newType==0){
 		var side = Math.ceil((Math.random()*4));
 	
 		if(newType==1){
@@ -209,9 +213,15 @@ function create_asteroid(newType,newSpeed){
 		if(side==4)
 			var newAsteroid = new object(0,100+(Math.random()*920),newType,random_x,random_y);
 
-		gameObjects.push(newAsteroid);  
-	}else{
+		gameObjects.push(newAsteroid); 
+		
+
+	}else if(newType==2){
 		var newAsteroid = new object(100+(Math.random()*1160),100+(Math.random()*920),newType,random_x,random_y);
+		gameObjects.push(newAsteroid);  
+	
+	}else if(newType==3){
+		var newAsteroid = new object(300+(Math.random()*960),300+(Math.random()*720),newType,random_x,random_y);
 		gameObjects.push(newAsteroid);  
 	}
 
@@ -280,22 +290,29 @@ function draw()
 		draw_sprite(canvas,about,100,100);
 
 	}
-
+	draw_sprite(canvas,cursor,game_mouse_x,game_mouse_y);
 	//textout(canvas,font,gameObjects.length,5,65,40,makecol(0,0,0));
 
 	
 }
 
 
+function updatePosition(e) {
+  game_mouse_x += e.movementX;
+  game_mouse_y += e.movementY;
+}
 
 function update()
 
 {	
+
+	console.log(game_mouse_x + ":" + game_mouse_y);
+
 	tick+=1;
 
 	if(GAME_STATE==1){
 
-		create_asteroid(3,0);
+		
 
 		if(key[KEY_ESC]){
 			GAME_STATE=0;
@@ -309,7 +326,7 @@ function update()
 			seconds++;
 			frames=0;
 
-			if(1==1){
+			if(Math.ceil(Math.random()*5)==1){
 				create_asteroid(3,0);
 			}	
 		}
@@ -331,14 +348,16 @@ function update()
 		}
 
 		for (i = 0; i < gameObjects.length; i++) {
-			gameObjects[i].update();
-			
-
 			if(gameObjects[i].getX()>1300 || gameObjects[i].getX()<-200 || gameObjects[i].getY()<-200 || gameObjects[i].getY()>1300 ){
 				gameObjects.splice(i,1);
 				
 
 			}
+			
+			gameObjects[i].update();
+			
+
+		
 		} 
 		
 		angle=angle+1;
@@ -359,14 +378,14 @@ function update()
 			spaceship_y=100;
 		
 		if(is_alive){
-			angle_radians=find_angle(spaceship_x,spaceship_y,mouse_x,mouse_y);
+			angle_radians=find_angle(spaceship_x,spaceship_y,game_mouse_x,game_mouse_y);
 
 			angle_degrees=(angle_radians*57.2957795);
 			angle_allegro=(angle_degrees/1.41176470588);
 		
 
-			spaceship_x_velocity = -(spaceship_x - mouse_x)/spaceship_speed;
-			spaceship_y_velocity = -(spaceship_y - mouse_y)/spaceship_speed;
+			spaceship_x_velocity = -(spaceship_x - game_mouse_x)/spaceship_speed;
+			spaceship_y_velocity = -(spaceship_y - game_mouse_y)/spaceship_speed;
 		
 			spaceship_x+=spaceship_x_velocity;
 			spaceship_y+=spaceship_y_velocity;
@@ -424,6 +443,7 @@ function setup(){
 	about = load_bmp("images/about.png");
 
 	gas = load_bmp("images/gas.png");
+	cursor = load_bmp("images/cursor.png");
 
 
 	music = load_sample("audio/music.mp3");
@@ -439,6 +459,7 @@ function main()
 {
 	enable_debug('debug');
 	allegro_init_all("game_canvas", 1160,920);
+	
 	setup();
 	ready(function(){
 		loop(function(){

@@ -46,11 +46,16 @@ function END_OF_MAIN()
 /// @name MOUSE ROUTINES
 //@{
 
+
+
+
+
 /// Mouse button bitmask.
 /// Each bit in the mask represents a separate mouse button state. If right mouse button is down, mouse_b value would be 4, 00100 in binary. Each bit represents one mouse button. use something like if (mouse_b&1) to check for separate buttons.
 /// * Button 0 is LMB. (mouse_b&1)
 /// * Button 1 is MMB / wheel. (mouse_b&2)
 /// * Button 2 is RMB. (mouse_b&4)
+
 var mouse_b = 0;
 
 /// Same as mouse_b but only checks if a button was pressed last frame
@@ -98,11 +103,27 @@ var _last_mouse_z = -1;
 /// is context menu enabled?
 var _menu = false;
 
+
+
+
+
 /// Installs mouse handlers.
 /// Must be called after set_gfx_mode() to be able to determine mouse position within the given canvas!
 /// @param menu If true, context menu will be available on right click on canvas. Default is false.
 function install_mouse(menu)
-{
+{	
+	canvas.canvas.onclick = function() {
+ 		canvas.canvas.requestPointerLock();
+		document.addEventListener("mousemove", updatePosition, false);
+
+	}
+
+	canvas.canvas.requestPointerLock = canvas.canvas.requestPointerLock ||
+                            canvas.canvas.mozRequestPointerLock;
+
+	canvas.canvas.requestPointerLock()
+
+	
 	if (!canvas)
 	{
 		_error("You must call set_gfx_mode before install_mouse");
@@ -113,6 +134,8 @@ function install_mouse(menu)
 		_allog("Mouse already installed");
 		return -1;
 	}
+
+
 	canvas.canvas.addEventListener('mouseup',_mouseup);
 	canvas.canvas.addEventListener('mousedown',_mousedown);
 	canvas.canvas.addEventListener('mousemove',_mousemove);
