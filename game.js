@@ -23,6 +23,7 @@ var beat_highscore = false;
 var music;
 var vortex_sfx;
 var death_sfx;
+var gas_sfx;
 var main_menu;
 var about;
 var help;
@@ -156,7 +157,8 @@ object.prototype.update = function(){
 
 		if(this.type==3){
 		
-			if(collision(this.x+10,this.x+30,spaceship_x+10,spaceship_x+30,this.y+10,this.y+30,spaceship_y+10,spaceship_y+30)){
+			if(collision(this.x,this.x+32,spaceship_x+10,spaceship_x+30,this.y,this.y+32,spaceship_y+10,spaceship_y+30)){
+				play_sample(gas_sfx);
 				if(spaceship_speed>10)
 					spaceship_speed-=10;
 				gameObjects.splice(gameObjects.indexOf(this),1);
@@ -319,7 +321,7 @@ function update()
 			seconds++;
 			frames=0;
 
-			if(Math.ceil(Math.random()*5)==1){
+			if(Math.ceil(Math.random()*10)==1){
 				create_asteroid(3,0);
 			}	
 		}
@@ -441,6 +443,7 @@ function setup(){
 	music = load_sample("audio/music.mp3");
 	vortex_sfx = load_sample("audio/vortex_sfx.mp3");
 	death_sfx = load_sample("audio/death_sfx.mp3");
+	gas_sfx = load_sample("audio/gas_sfx.mp3");
 
 	play_sample(music,255,1000,1);
 	
