@@ -1,10 +1,10 @@
 Written by Danny Van Stemp
 Music by Allan Legemaate
 Art by Allan Legemaate and Ryan Van Stemp
-Sound effects by roper1911 and Robinhood76
+Sound effects by roper1911,Robinhood76,tyops
 AllegroJS HTML5 framework by Sos Sosowski
 
 Sos Sosowski - allegrojs.net
-roper1911,Robinhood76 - freesound.org
+roper1911,Robinhood76,tyops - freesound.org
 Ryan Van Stemp, Danny Van Stemp,
 Allan Legemaate - adsgames.net
