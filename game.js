@@ -188,6 +188,8 @@ function restart_game(){
 	create_asteroid(0,0);
 	spaceship_x=450;
 	spaceship_y=350;
+	mouse_x=450;
+	mouse_y=350;
 
 }
 
@@ -361,20 +363,10 @@ function update()
 		
 		angle=angle+1;
 		
-		if(angle==256)
+		if(angle>=256)
 			angle=0;
 
-		if(spaceship_x>960-46)
-			spaceship_x=960-46;
-
-		if(spaceship_x<0)
-			spaceship_x=0;
-
-		if(spaceship_y>720-46)
-			spaceship_y=720-46;
-
-		if(spaceship_y<0)
-			spaceship_y=0;
+		
 		
 		if(is_alive){
 			angle_radians=find_angle(spaceship_x,spaceship_y,mouse_x,mouse_y);
@@ -392,6 +384,19 @@ function update()
 			spaceship_x=10000;
 			spaceship_y=10000;
 		}
+
+
+		if(spaceship_x>960-46)
+			spaceship_x=960-46;
+
+		if(spaceship_x<0)
+			spaceship_x=0;
+
+		if(spaceship_y>720-46)
+			spaceship_y=720-46;
+
+		if(spaceship_y<0)
+			spaceship_y=0;
 	}
 	if(GAME_STATE==0 && tick>10){
 	if(location_clicked(290,700,360,460)){
