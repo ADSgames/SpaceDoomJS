@@ -186,8 +186,8 @@ function restart_game(){
 	create_asteroid(0,0);
 	create_asteroid(0,0);
 	create_asteroid(0,0);
-	spaceship_x=500;
-	spaceship_y=400;
+	spaceship_x=450;
+	spaceship_y=350;
 
 }
 
@@ -205,19 +205,19 @@ function create_asteroid(newType,newSpeed){
 		}
 		
 		if(side==1)
-			var newAsteroid = new object((Math.random()*960),0,newType,random_x,random_y);
+			var newAsteroid = new object((Math.random()*960),-50,newType,random_x,random_y);
 		if(side==2)
-			var newAsteroid = new object((Math.random()*960),820,newType,random_x,random_y);
+			var newAsteroid = new object((Math.random()*960),720,newType,random_x,random_y);
 		if(side==3)
-			var newAsteroid = new object(960,100+(Math.random()*720),newType,random_x,random_y);
+			var newAsteroid = new object(960,-25+(Math.random()*720),newType,random_x,random_y);
 		if(side==4)
-			var newAsteroid = new object(-50,100+(Math.random()*720),newType,random_x,random_y);
+			var newAsteroid = new object(-50,-25+(Math.random()*720),newType,random_x,random_y);
 
 		gameObjects.push(newAsteroid); 
 		
 
 	}else if(newType==2){
-		var newAsteroid = new object((Math.random()*960),100+(Math.random()*720),newType,random_x,random_y);
+		var newAsteroid = new object((Math.random()*960),(Math.random()*720),newType,random_x,random_y);
 		gameObjects.push(newAsteroid);  
 	
 	}else if(newType==3){
@@ -232,7 +232,7 @@ function draw()
     
 	
    if(GAME_STATE==1){
-		draw_sprite(canvas,background,0,100);
+		draw_sprite(canvas,background,0,0);
 
 		
 		if(is_alive)rotate_sprite(canvas,spaceship,spaceship_x,spaceship_y,angle_allegro);
@@ -241,53 +241,58 @@ function draw()
 			gameObjects[i].draw();
 		} 
 
-		draw_sprite(canvas,frame,0,0);
+		
+		var text_colour = makecol(255,255,255);
+		var x=5;
 
 		if(is_alive){
 			
-			if(high_seconds<10)
-				textout(canvas,font,"Highscore: " + high_minutes + ":" + "0" + high_seconds,0,40,40,makecol(0,0,0));
-			else
-				textout(canvas,font,"Highscore: " + high_minutes + ":" + high_seconds,0,40,40,makecol(0,0,0));
-
+			if(high_minutes>minutes || (high_minutes == minutes && seconds>high_seconds)){
+				if(seconds<10)
+					textout(canvas,font,"" + minutes + ":" + "0" + seconds,x,40,40,text_colour);
+				else
+					textout(canvas,font,"" + minutes + ":" + seconds,x,40,40,text_colour);
+			}else{
+				if(high_seconds<10)
+					textout(canvas,font,"" + high_minutes + ":" + "0" + high_seconds,x,40,40,text_colour);
+				else
+					textout(canvas,font,"" + high_minutes + ":" + high_seconds,x,40,40,text_colour);
+			}
 			if(seconds<10)
-				textout(canvas,font,minutes + ":" + "0" + seconds,0,80,40,makecol(0,0,0));
+				textout(canvas,font,minutes + ":" + "0" + seconds,x,80,40,text_colour);
 			else
-				textout(canvas,font,minutes + ":" + seconds,0,80,40,makecol(0,0,0));
+				textout(canvas,font,minutes + ":" + seconds,x,80,40,text_colour);
 		}
 		if(!is_alive){
-			textout(canvas,font,"You died. Press R to restart",0,40,40,makecol(0,0,0));
+			textout(canvas,font,"You died. Press R to restart",0,40,40,text_colour);
 			if(high_minutes<minutes || (high_minutes==minutes && seconds>high_seconds) ){
 				beat_highscore=true;
 				
 				if(seconds<10)
-					textout(canvas,font,"New Highscore!: " + minutes + ":" + "0" + seconds,0,80,40,makecol(0,0,0));
+					textout(canvas,font,"New Highscore!: " + minutes + ":" + "0" + seconds,x,80,40,text_colour);
 				else
-					textout(canvas,font,"New Highscore!: " + minutes + ":" + seconds,0,80,40,makecol(0,0,0));
+					textout(canvas,font,"New Highscore!: " + minutes + ":" + seconds,x,80,40,text_colour);
 			}else{
 				if(seconds<10)
-					textout(canvas,font,minutes + ":" + "0" + seconds,0,80,40,makecol(0,0,0));
+					textout(canvas,font,minutes + ":" + "0" + seconds,x,80,40,text_colour);
 				else
-					textout(canvas,font,minutes + ":" + seconds,0,80,40,makecol(0,0,0));
+					textout(canvas,font,minutes + ":" + seconds,x,80,40,text_colour);
 			}
 		}
     }
 	if(GAME_STATE==0){
-		draw_sprite(canvas,frame,0,0);
-		draw_sprite(canvas,background,0,100);
-		draw_sprite(canvas,main_menu,0,100);
+		draw_sprite(canvas,background,0,0);
+		draw_sprite(canvas,main_menu,0,0);
 
 	}
 	if(GAME_STATE==2){
-		draw_sprite(canvas,frame,0,0);
-		draw_sprite(canvas,background,0,100);
-		draw_sprite(canvas,help,0,100);
+		draw_sprite(canvas,background,0,0);
+		draw_sprite(canvas,help,0,0);
 
 	}
 	if(GAME_STATE==3){
-		draw_sprite(canvas,frame,0,0);
-		draw_sprite(canvas,background,0,100);
-		draw_sprite(canvas,about,0,100);
+		draw_sprite(canvas,background,0,0);
+		draw_sprite(canvas,about,0,0);
 
 	}
 
@@ -301,7 +306,6 @@ function update()
 
 {	
 
-	console.log(mouse_x + ":" + mouse_y);
 
 	tick+=1;
 
@@ -366,11 +370,11 @@ function update()
 		if(spaceship_x<0)
 			spaceship_x=0;
 
-		if(spaceship_y>820-46)
-			spaceship_y=820-46;
+		if(spaceship_y>720-46)
+			spaceship_y=720-46;
 
-		if(spaceship_y<100)
-			spaceship_y=100;
+		if(spaceship_y<0)
+			spaceship_y=0;
 		
 		if(is_alive){
 			angle_radians=find_angle(spaceship_x,spaceship_y,mouse_x,mouse_y);
@@ -390,7 +394,7 @@ function update()
 		}
 	}
 	if(GAME_STATE==0 && tick>10){
-	if(location_clicked(290,700,460,560)){
+	if(location_clicked(290,700,360,460)){
 			tick=0;
 			restart_game();
 			create_asteroid(0,0);
@@ -398,11 +402,11 @@ function update()
 			create_asteroid(0,0);
 			GAME_STATE=1;
 		}
-		if(location_clicked(290,700,560,660)){
+		if(location_clicked(290,700,460,560)){
 			tick=0;
 			GAME_STATE=2;
 		}
-		if(location_clicked(290,700,660,760)){
+		if(location_clicked(290,700,560,660)){
 			tick=0;
 			
 			GAME_STATE=3;
@@ -425,7 +429,30 @@ function update()
 
 function setup(){
 
-	
+
+	//Website path
+	/*
+	frame = load_bmp("files/deepspace/images/frame.png");
+	background = load_bmp("files/deepspace/images/background.png");
+	main_menu = load_bmp("files/deepspace/images/main_menu.png");
+	asteroid_large = load_bmp("files/deepspace/images/asteroid_large.png");
+	asteroid_small = load_bmp("files/deepspace/images/asteroid_small.png");
+	spaceship = load_bmp("files/deepspace/images/spaceship.png");
+	vortex = load_bmp("files/deepspace/images/vortex.png");
+	help = load_bmp("files/deepspace/images/help.png");
+	about = load_bmp("files/deepspace/images/about.png");
+
+	gas = load_bmp("files/deepspace/images/gas.png");
+	cursor = load_bmp("files/deepspace/images/cursor.png");
+
+
+	music = load_sample("files/deepspace/audio/music.mp3");
+	vortex_sfx = load_sample("files/deepspace/audio/vortex_sfx.mp3");
+	death_sfx = load_sample("files/deepspace/audio/death_sfx.mp3");
+	gas_sfx = load_sample("files/deepspace/audio/gas_sfx.mp3");
+	*/
+
+	// Local files
 	frame = load_bmp("images/frame.png");
 	background = load_bmp("images/background.png");
 	main_menu = load_bmp("images/main_menu.png");
@@ -444,7 +471,7 @@ function setup(){
 	vortex_sfx = load_sample("audio/vortex_sfx.mp3");
 	death_sfx = load_sample("audio/death_sfx.mp3");
 	gas_sfx = load_sample("audio/gas_sfx.mp3");
-
+	
 	play_sample(music,255,1000,1);
 	
 	
@@ -453,7 +480,7 @@ function setup(){
 function main()
 {
 	enable_debug('debug');
-	allegro_init_all("game_canvas", 960,820);
+	allegro_init_all("game_canvas", 960,720);
 	
 	setup();
 	ready(function(){
